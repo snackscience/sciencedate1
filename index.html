@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과학 긍정경험 설문 통계 · SchoolKit</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#14151B; --card:#1E1F27; --card2:#262731; --line:#2C2D37; --line2:#3A3B47;
+  --ink:#F2EEE8; --mute:#9A97A3; --gold:#E3C08D; --sage:#8FB8A6; --rose:#D79A8C; --slate:#5E6070;
+  --sans:'Pretendard','Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --serif:'Noto Serif KR','Noto Serif CJK KR',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0C0D11;color:var(--ink);font-family:var(--sans);overflow:hidden}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#stage{width:1280px;height:720px;background:var(--bg);border-radius:18px;position:relative;transform-origin:center center;flex:none;overflow:hidden}
+#foot{position:fixed;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:#4A4B57}
+button{font-family:inherit;cursor:pointer}
+
+/* 머리글 */
+.hd{position:absolute;left:32px;right:32px;top:22px;height:68px;display:flex;align-items:flex-end;justify-content:space-between}
+.brand{font-size:14px;color:var(--mute);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd>div:first-child{flex:1;min-width:0;margin-right:16px}
+.ctrl button,.ctrl .pill{white-space:nowrap;flex:none}
+.brand b{color:var(--gold);font-weight:600}
+.ptitle{font-size:28px;font-weight:600;margin-top:6px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrl{display:flex;align-items:center;gap:6px;flex:none}
+.pill{height:34px;min-width:40px;padding:0 10px;border-radius:17px;border:1px solid var(--line2);background:transparent;color:var(--mute);font-size:15px}
+.pill.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
+.pill:hover:not(.on){border-color:var(--mute);color:var(--ink)}
+.sep{width:1px;height:24px;background:var(--line2);margin:0 2px}
+.btn{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:15px;display:flex;align-items:center;gap:6px}
+.btn:hover{background:rgba(227,192,141,.1)}
+.btn svg{width:16px;height:16px}
+.btn.spin svg{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.play{height:34px;padding:0 12px 0 10px;border-radius:17px;border:1px solid var(--line2);background:transparent;color:var(--ink);font-size:15px;display:flex;align-items:center;gap:6px}
+.play svg{width:15px;height:15px}
+.play:hover{border-color:var(--gold);color:var(--gold)}
+.play.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
+#sec{min-width:50px}
+#prog{position:absolute;left:0;right:0;top:0;height:3px;z-index:5}
+#prog b{display:block;height:100%;width:0;background:var(--gold)}
+.brand{cursor:pointer}
+.auto{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.auto i{width:30px;height:18px;border-radius:9px;background:var(--line2);position:relative;transition:.2s}
+.auto i:after{content:'';position:absolute;left:3px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--mute);transition:.2s}
+.auto.on i{background:var(--sage)}.auto.on i:after{left:15px;background:var(--bg)}
+.nav{display:flex;align-items:center;gap:4px}
+.nav button{width:34px;height:34px;border-radius:17px;border:1px solid var(--line2);background:transparent;color:var(--ink);font-size:18px;line-height:1}
+.nav button:hover{border-color:var(--gold);color:var(--gold)}
+.nav span{font-size:15px;min-width:52px;text-align:center;color:var(--ink)}
+.upd{position:absolute;right:32px;top:8px;font-size:12px;color:var(--mute)}
+.upd .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sage);margin-right:6px;animation:bl 2s infinite}
+@keyframes bl{50%{opacity:.25}}
+
+/* 본문 */
+.ct{position:absolute;left:32px;right:32px;top:104px;bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden}
+.ctitle{font-size:22px;font-weight:600}
+.csub{font-size:14px;color:var(--mute);margin-top:4px}
+.g{display:grid;gap:16px}
+.fade{animation:fd .45s ease}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 1페이지 */
+.top3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.rk{background:var(--card2);border-radius:12px;padding:14px 18px;border:1px solid transparent}
+.rk.first{border-color:var(--gold)}
+.rk .n{font-size:15px;color:var(--mute)}.rk.first .n{color:var(--gold)}
+.rk .nm{font-size:18px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk .pc{font-size:30px;font-weight:700;margin-top:4px}.rk.first .pc{color:var(--gold)}
+.rk .pc small{font-size:14px;color:var(--mute);font-weight:400;margin-left:6px}
+.tkh{display:flex;justify-content:space-between;margin-top:18px;font-size:15px;color:var(--mute)}
+.tkh em{font-style:normal;color:var(--sage)}
+.tk{margin-top:10px;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.track{display:flex;gap:14px;width:max-content;animation:mv linear infinite}
+.tk:hover .track{animation-play-state:paused}
+@keyframes mv{to{transform:translateX(-50%)}}
+.rc{width:330px;height:92px;background:var(--card2);border-radius:12px;padding:12px 16px;flex:none}
+.rc .t{font-size:14px;color:var(--gold);display:flex;justify-content:space-between}
+.rc .t span{color:var(--mute)}
+.rc .x{font-size:16px;line-height:1.45;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bars .r{display:grid;align-items:center;gap:12px}
+.bar{height:10px;border-radius:5px;background:var(--line2);position:relative;overflow:hidden}
+.bar b{position:absolute;left:0;top:0;bottom:0;border-radius:5px;transition:width .6s ease}
+.lg{display:flex;align-items:center;gap:10px;font-size:17px}
+.sw{width:12px;height:12px;border-radius:3px;flex:none}
+.qt{position:absolute;left:24px;right:24px;top:64px;bottom:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.qm{position:absolute;left:28px;top:56px;font-family:var(--serif);font-size:80px;line-height:1;color:var(--gold)}
+.qx{font-family:var(--serif);font-weight:500;line-height:1.5;max-width:560px;transition:opacity .5s}
+.qa{font-size:15px;color:var(--mute);margin-top:12px;transition:opacity .5s}
+.qn{position:absolute;right:24px;bottom:18px;font-size:13px;color:var(--mute)}
+
+/* 상세 페이지 */
+.big{font-size:56px;font-weight:700;letter-spacing:-.02em}
+.kpi .l{font-size:16px;color:var(--mute)}.kpi .v{font-size:44px;font-weight:700;margin-top:8px}
+.kpi .v small{font-size:18px;color:var(--mute);font-weight:400;margin-left:6px}
+.item{display:grid;grid-template-columns:500px 1fr 80px;align-items:center;gap:22px}
+.item .lb{font-size:17px;line-height:1.35}
+.tag{display:inline-block;font-size:12px;color:var(--rose);border:1px solid var(--rose);border-radius:9px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.stack{display:flex;height:26px;border-radius:8px;overflow:hidden}
+.stack div{display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--bg);white-space:nowrap;overflow:hidden;transition:width .6s}
+.pos{font-size:26px;font-weight:700;color:var(--gold);text-align:right}
+.legend{display:flex;gap:18px;font-size:14px;color:var(--mute)}
+.legend span{display:flex;align-items:center;gap:6px}
+.hm{display:grid;gap:8px}
+.hm div{border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600}
+.hm .h{background:none!important;color:var(--mute);font-size:16px;font-weight:400}
+.empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--mute);font-size:18px}
+#toast{position:absolute;left:50%;top:14px;transform:translate(-50%,-60px);background:var(--sage);color:var(--bg);font-size:15px;font-weight:600;padding:8px 18px;border-radius:18px;transition:transform .35s;z-index:9}
+#toast.show{transform:translate(-50%,0)}
+#err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--rose);font-size:18px;background:var(--bg);z-index:8}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <div id="toast"></div>
+    <div id="prog"><b></b></div>
+    <div class="upd" id="upd"></div>
+    <div class="hd">
+      <div>
+        <div class="brand"><b>SchoolKit</b> · <span id="bt"></span></div>
+        <div class="ptitle" id="pt"></div>
+      </div>
+      <div class="ctrl">
+        <div id="pills" style="display:flex;gap:4px"></div>
+        <div class="sep"></div>
+        <button class="btn" id="rf" title="새 응답 불러오기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 19v-4h-4"/></svg>새로고침</button>
+        <div class="sep"></div>
+        <button class="play" id="play" title="자동 넘김 (스페이스바)"><svg viewBox="0 0 24 24" fill="currentColor"><path id="playIcon" d="M8 5v14l11-7z"/></svg><span>자동 넘김</span></button>
+        <button class="pill" id="sec" title="넘김 간격 바꾸기">15초</button>
+        <div class="sep"></div>
+        <div class="nav"><button id="home" aria-label="홈으로" title="홈 (Home 키)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;vertical-align:-3px"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button><button id="pv" aria-label="이전 페이지">‹</button><span id="pn"></span><button id="nx" aria-label="다음 페이지">›</button></div>
+      </div>
+    </div>
+    <div class="ct" id="ct"></div>
+    <div id="err"></div>
+  </div>
+</div>
+<div id="foot">SchoolKit · 학교에서 바로 쓰는 수업 도구 · snackscience@naver.com · ⓒ snackscience. All rights reserved. · v1.3 · ← → 페이지 이동 · Home 홈 · 스페이스바 자동 넘김 · <a href="#" id="unlink" style="color:#4A4B57">연결 해제</a></div>
+
+<script>
+/* 연결 정보(웹 앱 주소 · 접근 코드)는 코드에 쓰지 않고, 처음 열 때 화면에서 입력해 이 브라우저에만 저장합니다. */
+
+var C = {gold:'#E3C08D',sage:'#8FB8A6',rose:'#D79A8C',slate:'#5E6070',line:'#3A3B47',ink:'#F2EEE8',mute:'#9A97A3',bg:'#14151B'};
+var SHORT = {
+  '롤링볼 제작하기':'롤링볼 제작',
+  '현미경으로 체세포 관찰하기':'현미경 체세포 관찰',
+  '계란 낙하 안전 구조물 제작하기':'계란 낙하 구조물',
+  '발열 도시락 이용 발열반응 알아보기':'발열 도시락',
+  '감각 기관 - 사과주스, 포도 주스 구분하기':'주스 맛 구분하기',
+  'Tracker 활용 자유 낙하 운동':'Tracker 자유 낙하',
+  '스마트폰 활용 거리에 따른 빛의 세기 측정':'빛의 세기 측정',
+  '무선 대기압 온도 센서 활용 구름 발생 실험':'구름 발생 실험',
+  '무선 온도 센서 복사평형실험':'복사평형 실험',
+  'windy로 실시간 날씨 확인하기':'windy 실시간 날씨'
+};
+var SCALES = [['매우자주','자주','가끔','전혀없음'],['매우 그렇다','그렇다','그렇지 않다','전혀 그렇지 않다']];
+var DOM_SHORT = {A:'정서',B:'자아개념',C:'학습동기',D:'진로포부',E:'태도'};
+var PAGES = [
+  {t:'우리들의 과학 수업 이야기', f:pDashboard},
+  {t:'응답 현황', f:pResponse},
+  {t:'흥미로웠던 실험 전체 순위', f:pExperiments},
+  {t:'영역별 긍정 응답률', f:pDomains},
+  {t:'A. 과학학습정서', f:function(s){return pDomainItems(s,'A')}},
+  {t:'B. 과학관련 자아개념', f:function(s){return pDomainItems(s,'B')}},
+  {t:'C. 과학학습동기', f:pMotivation},
+  {t:'D. 과학관련 진로포부', f:function(s){return pDomainItems(s,'D')}},
+  {t:'E. 과학관련 태도', f:function(s){return pDomainItems(s,'E')}},
+  {t:'사전 · 사후 비교', f:pPP1},
+  {t:'사전 · 사후 통계 검정', f:pPP2},
+  {t:'사전 · 사후 문항별 변화', f:pPP3},
+  {t:'문항 순위', f:pRanking}
+];
+var DATA=null, page=0, cls='all', preScope='all', ppCache=null, quoteTimer=null, playTimer=null, playing=false, SECS=[10,15,30], secIdx=1;
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pct(a,b){return b?Math.round(a*1000/b)/10:0}
+function p0(a,b){return b?Math.round(a*100/b):0}
+function sn(e){return SHORT[e]||e}
+
+/* ===== 통계 계산 ===== */
+function stats(recs){
+  var s={N:recs.length,best:{},others:{},any:{},comp:{},items:[],dom:{},C:{}};
+  DATA.experiments.forEach(function(e){s.best[e]=0;s.others[e]=0;s.any[e]=0});
+  recs.forEach(function(r){
+    if(r.best){s.best[r.best]=(s.best[r.best]||0)+1}
+    var set={};if(r.best)set[r.best]=1;
+    (r.others||[]).forEach(function(o){s.others[o]=(s.others[o]||0)+1;set[o]=1});
+    Object.keys(set).forEach(function(e){s.any[e]=(s.any[e]||0)+1});
+    if(r.comp)s.comp[r.comp]=(s.comp[r.comp]||0)+1;
+  });
+  DATA.items.forEach(function(it,i){
+    if(it.choice){recs.forEach(function(r){var v=r.ans[i];if(v)s.C[v]=(s.C[v]||0)+1});return}
+    var sc=it.domain==='A'?SCALES[0]:SCALES[1];
+    var cnt=[0,0,0,0],n=0,sum=0,pos=0;
+    recs.forEach(function(r){var k=sc.indexOf(r.ans[i]);if(k<0)return;cnt[k]++;n++;var v=4-k;if(it.reverse)v=5-v;sum+=v;if(v>=3)pos++});
+    var o={i:i,domain:it.domain,label:it.label,reverse:it.reverse,scale:sc,cnt:cnt,n:n,mean:n?sum/n:0,pos:n?pos/n*100:0,posN:pos};
+    s.items.push(o);
+    var d=s.dom[it.domain]||(s.dom[it.domain]={n:0,sum:0,pos:0});
+    d.n+=n;d.sum+=sum;d.pos+=pos;
+  });
+  Object.keys(s.dom).forEach(function(k){var d=s.dom[k];d.mean=d.n?d.sum/d.n:0;d.rate=d.n?d.pos/d.n*100:0});
+  var tn=0,tp=0;Object.keys(s.dom).forEach(function(k){tn+=s.dom[k].n;tp+=s.dom[k].pos});s.allRate=tn?tp/tn*100:0;
+  return s;
+}
+function filtered(){return cls==='all'?DATA.records:DATA.records.filter(function(r){return r.cls==cls})}
+function classes(){var o={};DATA.records.forEach(function(r){o[r.cls]=1});return Object.keys(o).map(Number).filter(Boolean).sort(function(a,b){return a-b})}
+function clsLabel(){return cls==='all'?'전체':(DATA.records[0]?DATA.records[0].grade:3)+'학년 '+cls+'반'}
+function sortedExp(obj){return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]})}
+
+/* ===== 그림 도구 ===== */
+function donut(parts,size,stroke,center){
+  var r=(size-stroke)/2,cx=size/2,tot=parts.reduce(function(a,p){return a+p.v},0)||1,off=0,out='';
+  parts.forEach(function(p){var len=p.v/tot*100;out+='<circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="'+p.c+'" stroke-width="'+stroke+'" pathLength="100" stroke-dasharray="'+Math.max(len-0.6,0)+' '+(100-len+0.6)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 '+cx+' '+cx+')"/>';off+=len});
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="'+C.line+'" stroke-width="'+stroke+'"/>'+out+(center||'')+'</svg>';
+}
+function ring(val,size,stroke,color){
+  var r=(size-stroke)/2,cx=size/2;
+  return '<svg width="'+size+'" height="'+size+'"><circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="'+C.line+'" stroke-width="'+stroke+'"/><circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+stroke+'" stroke-linecap="round" pathLength="100" stroke-dasharray="'+val+' 100" transform="rotate(-90 '+cx+' '+cx+')"/></svg>';
+}
+function stackBar(it){
+  var cols=[C.gold,C.sage,C.slate,C.rose];
+  var order=it.reverse?[3,2,1,0]:[0,1,2,3];
+  return '<div class="stack">'+order.map(function(k,j){var w=it.n?it.cnt[k]/it.n*100:0;return '<div style="width:'+w+'%;background:'+cols[j]+'">'+(w>=7?Math.round(w)+'%':'')+'</div>'}).join('')+'</div>';
+}
+
+/* ===== 1페이지: 대시보드 ===== */
+function pDashboard(s){
+  var N=s.N; if(!N) return '<div class="empty">아직 응답이 없어요</div>';
+  var rank=sortedExp(s.best).filter(function(e){return s.best[e]>0});
+  var top=rank.slice(0,3).map(function(e,i){return '<div class="rk'+(i?'':' first')+'"><div class="n">'+(i+1)+'위</div><div class="nm" title="'+esc(e)+'">'+esc(sn(e))+'</div><div class="pc">'+p0(s.best[e],N)+'%<small>'+s.best[e]+'명</small></div></div>'}).join('');
+  var rs=filtered().filter(function(r){return r.reason&&r.reason.length>=4}).slice(0,60);
+  var cards=rs.map(function(r){return '<div class="rc"><div class="t">'+esc(sn(r.best))+'<span>'+r.cls+'반</span></div><div class="x">'+esc(r.reason)+'</div></div>'}).join('');
+  var dur=Math.max(rs.length*5,20);
+  var oth=sortedExp(s.others);
+  var maxO=Math.max.apply(null,oth.map(function(e){return s.others[e]}).concat([1]));
+  var orows=oth.map(function(e,i){var v=p0(s.others[e],N);return '<div class="r" style="grid-template-columns:140px 1fr 42px"><span style="font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+esc(e)+'">'+esc(sn(e))+'</span><div class="bar" style="height:8px"><b style="width:'+(s.others[e]/N*100)+'%;background:'+(i?C.sage:C.gold)+'"></b></div><span style="font-size:14px;font-weight:600;text-align:right;color:'+(i?C.ink:C.gold)+'">'+v+'%</span></div>'}).join('');
+  var cc=[C.gold,C.sage,C.rose,C.slate,'#7C7A8A'];
+  var comp=sortedExp(s.comp).map(function(k,i){return {k:k,v:s.comp[k],c:cc[i%cc.length]}});
+  var compN=comp.reduce(function(a,p){return a+p.v},0);
+  var leg=comp.map(function(p){return '<div class="lg" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:10px"><i class="sw" style="background:'+p.c+'"></i>'+esc(p.k)+'</span><b style="color:'+p.c+'">'+p0(p.v,compN)+'%</b></div>'}).join('');
+  var cen='<text x="80" y="76" text-anchor="middle" fill="'+C.ink+'" font-size="24" font-weight="700" font-family="Pretendard,sans-serif">'+compN+'</text><text x="80" y="98" text-anchor="middle" fill="'+C.mute+'" font-size="13" font-family="Pretendard,sans-serif">명</text>';
+  return '<div class="g fade" style="grid-template-rows:342px 236px;height:100%">'+
+   '<div class="g" style="grid-template-columns:728px 1fr">'+
+    '<div class="card"><div class="ctitle">가장 재미있었던 실험은?</div><div class="top3">'+top+'</div>'+
+     '<div class="tkh"><span>그 이유는?</span><em>새 응답이 들어오면 자동으로 추가돼요</em></div>'+
+     '<div class="tk"><div class="track" style="animation-duration:'+dur+'s">'+cards+cards+'</div></div></div>'+
+    '<div class="card"><div class="ctitle">그 외 재미있었던 실험은?</div><div class="csub">복수 선택 · 응답자 '+N+'명 대비</div><div class="bars" style="margin-top:12px;display:grid;gap:'+(oth.length>8?3:8)+'px">'+orows+'</div></div>'+
+   '</div>'+
+   '<div class="g" style="grid-template-columns:468px 1fr">'+
+    '<div class="card"><div class="ctitle">수업 활동으로 늘어난 역량</div><div style="display:flex;align-items:center;gap:28px;margin-top:18px">'+donut(comp,160,26,cen)+'<div style="flex:1;display:grid;gap:14px">'+leg+'</div></div></div>'+
+    '<div class="card" id="qcard"><div class="ctitle">1년 수업 소감</div><div class="qm">“</div><div class="qt"><div class="qx" id="qx"></div><div class="qa" id="qa"></div></div><div class="qn" id="qn"></div></div>'+
+   '</div></div>';
+}
+function startQuotes(){
+  clearInterval(quoteTimer);
+  var qs=filtered().filter(function(r){return r.comment&&r.comment.length>=4});
+  for(var i=qs.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=qs[i];qs[i]=qs[j];qs[j]=t}
+  var k=0,x=document.getElementById('qx'),a=document.getElementById('qa'),n=document.getElementById('qn');
+  if(!x)return;
+  if(!qs.length){x.textContent='아직 소감이 없어요';return}
+  function show(){
+    var q=qs[k%qs.length];
+    x.style.opacity=0;a.style.opacity=0;
+    setTimeout(function(){
+      var L=q.comment.length;x.style.fontSize=(L<25?30:L<45?26:L<70?22:19)+'px';
+      x.textContent=q.comment;a.textContent=q.grade+'학년 '+q.cls+'반';
+      n.textContent=(k%qs.length+1)+' / '+qs.length;
+      x.style.opacity=1;a.style.opacity=1;k++;
+    },450);
+  }
+  show();quoteTimer=setInterval(show,6000);
+}
+
+/* ===== 상세 페이지 ===== */
+function pResponse(s){
+  var m=DATA.meta, cs=classes(), cnt={};
+  DATA.records.forEach(function(r){cnt[r.cls]=(cnt[r.cls]||0)+1});
+  var mx=Math.max.apply(null,cs.map(function(c){return cnt[c]}).concat([1]));
+  var bars=cs.map(function(c){var h=cnt[c]/mx*250;return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:10px;height:100%"><b style="font-size:24px;color:'+(c==cls?C.gold:C.ink)+'">'+cnt[c]+'명</b><div style="width:72px;height:'+h+'px;border-radius:10px 10px 4px 4px;background:'+(c==cls||cls==='all'?C.gold:C.line)+';opacity:'+(cls==='all'?0.85:1)+'"></div><span style="font-size:17px;color:'+C.mute+'">'+c+'반</span></div>'}).join('');
+  function k(l,v,sub,col){return '<div class="card kpi"><div class="l">'+l+'</div><div class="v" style="color:'+(col||C.ink)+'">'+v+'<small>'+sub+'</small></div></div>'}
+  return '<div class="g fade" style="grid-template-rows:150px 1fr;height:100%">'+
+   '<div class="g" style="grid-template-columns:repeat(4,1fr)">'+k('유효 응답',m.valid,'명',C.gold)+k('수집된 응답',m.total,'건')+k('제외 · 동의 안 함',m.noConsent,'건')+k('제외 · 중복 제출',m.duplicates,'건')+'</div>'+
+   '<div class="card"><div style="display:flex;justify-content:space-between"><div><div class="ctitle">학급별 응답 수</div><div class="csub">같은 학생이 여러 번 제출하면 마지막 응답만 셉니다 · 마지막 응답 '+esc(m.lastResponse)+'</div></div></div>'+
+   '<div style="display:flex;justify-content:space-around;align-items:flex-end;height:330px;margin-top:10px;padding:0 60px">'+bars+'</div></div></div>';
+}
+function pExperiments(s){
+  var N=s.N||1, ex=sortedExp(s.any).filter(function(e){return s.any[e]>0});
+  var mx=Math.max.apply(null,ex.map(function(e){return s.any[e]}).concat([1]));
+  var rows=ex.map(function(e,i){return '<div style="display:grid;grid-template-columns:30px 340px 1fr 64px 92px;align-items:center;gap:14px"><span style="font-size:19px;font-weight:700;color:'+(i<3?C.gold:C.mute)+'">'+(i+1)+'</span><span style="font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(e)+'</span>'+
+    '<div class="bar" style="height:14px"><b style="width:'+(s.any[e]/N*100)+'%;background:'+C.sage+'"></b><b style="width:'+(s.best[e]/N*100)+'%;background:'+C.gold+'"></b></div>'+
+    '<b style="font-size:19px;text-align:right;color:'+C.sage+'">'+p0(s.any[e],N)+'%</b><span style="font-size:14px;text-align:right;color:'+C.gold+'">1순위 '+p0(s.best[e],N)+'%</span></div>'}).join('');
+  return '<div class="card fade" style="height:100%"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="ctitle">학생들이 흥미로웠다고 꼽은 실험</div><div class="csub">'+clsLabel()+' '+s.N+'명 · 1순위와 추가 선택을 합친 비율</div></div>'+
+   '<div class="legend"><span><i class="sw" style="background:'+C.sage+'"></i>흥미로웠다(전체)</span><span><i class="sw" style="background:'+C.gold+'"></i>가장 흥미로웠다(1순위)</span></div></div>'+
+   '<div style="display:grid;gap:'+(ex.length>8?19:26)+'px;margin-top:28px">'+rows+'<div style="font-size:13px;color:'+C.mute+';margin-top:2px">막대 길이 = 응답자 대비 비율 · 금색 부분은 1순위로 고른 학생</div>'+'</div></div>';
+}
+function pDomains(s){
+  var keys=['A','B','D','E'];
+  var cards=keys.map(function(k){var d=s.dom[k]||{rate:0,mean:0};var v=Math.round(d.rate);
+    return '<div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px"><div style="position:relative;width:200px;height:200px">'+ring(v,200,18,C.gold)+'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="big" style="color:'+C.gold+'">'+v+'<span style="font-size:26px">%</span></span></div></div>'+
+    '<div style="text-align:center"><div style="font-size:24px;font-weight:600">'+DOM_SHORT[k]+'</div><div style="font-size:15px;color:'+C.mute+';margin-top:6px">'+esc(DATA.domains[k])+'</div><div style="font-size:17px;margin-top:12px">평균 <b style="color:'+C.sage+'">'+d.mean.toFixed(2)+'</b> / 4점</div></div></div>'}).join('');
+  return '<div class="fade" style="height:100%;display:flex;flex-direction:column;gap:16px"><div class="g" style="grid-template-columns:repeat(4,1fr);flex:1">'+cards+'</div>'+
+   '<div style="font-size:15px;color:'+C.mute+';text-align:center">긍정 응답률 = 긍정 쪽 두 단계를 고른 비율 · 부정 문항(지루함 · 짜증 · 불안)은 반대로 계산 · '+clsLabel()+' '+s.N+'명 · 전체 긍정 응답률 <b style="color:'+C.gold+'">'+Math.round(s.allRate)+'%</b></div></div>';
+}
+function pDomainItems(s,k){
+  var its=s.items.filter(function(x){return x.domain===k}), d=s.dom[k]||{rate:0,mean:0};
+  var sc=k==='A'?SCALES[0]:SCALES[1], cols=[C.gold,C.sage,C.slate,C.rose];
+  var leg=sc.map(function(l,j){return '<span><i class="sw" style="background:'+cols[j]+'"></i>'+l+'</span>'}).join('');
+  var gap=its.length>6?12:its.length>5?24:34;
+  var rows=its.map(function(it){return '<div class="item"><div class="lb">'+esc(it.label)+(it.reverse?'<span class="tag">부정 문항</span>':'')+'</div>'+stackBar(it)+'<div class="pos">'+Math.round(it.pos)+'%</div></div>'}).join('');
+  return '<div class="card fade" style="height:100%;display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:flex-end">'+
+   '<div><div style="font-size:15px;color:'+C.mute+'">영역 긍정 응답률 · '+clsLabel()+' '+s.N+'명</div><div style="display:flex;align-items:baseline;gap:16px;margin-top:4px"><span class="big" style="color:'+C.gold+';font-size:'+(its.length>6?40:56)+'px">'+Math.round(d.rate)+'%</span><span style="font-size:18px">평균 <b style="color:'+C.sage+'">'+d.mean.toFixed(2)+'</b> / 4점</span></div></div>'+
+   '<div style="text-align:right"><div class="legend" style="justify-content:flex-end">'+leg+'</div>'+(k==='A'?'<div style="font-size:13px;color:'+C.mute+';margin-top:6px">부정 문항은 \'전혀없음\'이 긍정 쪽(금색)으로 표시돼요</div>':'')+'</div></div>'+
+   '<div style="display:grid;grid-template-columns:500px 1fr 80px;gap:22px;margin-top:'+(its.length>6?12:22)+'px;font-size:13px;color:'+C.mute+'"><span>문항</span><span>응답 분포</span><span style="text-align:right">긍정</span></div>'+
+   '<div style="display:grid;gap:'+gap+'px;margin-top:12px">'+rows+'</div></div>';
+}
+function pMotivation(s){
+  var ks=sortedExp(s.C), n=ks.reduce(function(a,k){return a+s.C[k]},0)||1, mx=s.C[ks[0]]||1;
+  var rows=ks.map(function(k,i){var neg=/딴 생각|딴 짓을 한다/.test(k)&&!/하지 않고/.test(k);var c=neg?C.rose:(i===0?C.gold:C.sage);
+    return '<div style="display:grid;grid-template-columns:560px 1fr 70px;align-items:center;gap:18px"><span style="font-size:17px">'+esc(k)+(neg?'<span class="tag">부정</span>':'')+'</span><div class="bar" style="height:14px"><b style="width:'+(s.C[k]/mx*100)+'%;background:'+c+'"></b></div><b style="font-size:19px;text-align:right;color:'+c+'">'+p0(s.C[k],n)+'%</b></div>'}).join('');
+  return '<div class="card fade" style="height:100%"><div class="ctitle">나를 가장 잘 나타내는 문장은?</div><div class="csub">'+clsLabel()+' '+n+'명 · 한 문장씩 고른 비율</div><div style="display:grid;gap:'+(ks.length>8?13:20)+'px;margin-top:24px">'+rows+'</div></div>';
+}
+function pRanking(s){
+  var its=s.items.slice().sort(function(a,b){return b.pos-a.pos});
+  function list(arr,col){return arr.map(function(it,i){return '<div style="display:grid;grid-template-columns:30px 1fr 70px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid '+C.line+'"><b style="font-size:19px;color:'+col+'">'+(i+1)+'</b><div><div style="font-size:17px;line-height:1.4">'+esc(it.label)+'</div><div style="font-size:13px;color:'+C.mute+';margin-top:3px">'+DOM_SHORT[it.domain]+(it.reverse?' · 부정 문항':'')+'</div></div><b style="font-size:24px;text-align:right;color:'+col+'">'+Math.round(it.pos)+'%</b></div>'}).join('')}
+  return '<div class="g fade" style="grid-template-columns:1fr 1fr;height:100%">'+
+   '<div class="card"><div class="ctitle">긍정 응답률이 높은 문항</div><div class="csub">'+clsLabel()+' '+s.N+'명 · 전체 '+its.length+'문항 중 상위 5개</div><div style="margin-top:10px">'+list(its.slice(0,5),C.gold)+'</div></div>'+
+   '<div class="card"><div class="ctitle">더 신경 쓸 문항</div><div class="csub">긍정 응답률 하위 5개</div><div style="margin-top:10px">'+list(its.slice(-5).reverse(),C.rose)+'</div></div></div>';
+}
+/* ===== 통계 검정 (외부 라이브러리 없이) ===== */
+function lgamma(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);var s=1.000000000190015;for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x)}
+function betacf(a,b,x){var m,m2,aa,c=1,d=1-(a+b)*x/(a+1),del,h,qab=a+b,qap=a+1,qam=a-1;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;h=d;
+  for(m=1;m<=300;m++){m2=2*m;aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break}return h}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;var bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
+function tP(t,df){return ibeta(df/(df+t*t),df/2,0.5)} /* 양측 p */
+function gammaP(a,x){if(x<=0)return 0;var gln=lgamma(a);if(x<a+1){var ap=a,sum=1/a,del=sum;for(var n=0;n<500;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*3e-14)break}return sum*Math.exp(-x+a*Math.log(x)-gln)}
+  var b=x+1-a,c=1/1e-30,d=1/b,h=d;for(var i=1;i<500;i++){var an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-30)d=1e-30;c=b+an/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;var dl=d*c;h*=dl;if(Math.abs(dl-1)<3e-14)break}return 1-Math.exp(-x+a*Math.log(x)-gln)*h}
+function normP(z){return 1-gammaP(0.5,z*z/2)} /* 양측 p = erfc(|z|/√2) */
+function meanSd(a){var n=a.length,m=0;a.forEach(function(v){m+=v});m/=n||1;var s=0;a.forEach(function(v){s+=(v-m)*(v-m)});return {n:n,m:m,sd:n>1?Math.sqrt(s/(n-1)):0}}
+function welch(x,y){ /* x=사전, y=사후 */
+  var a=meanSd(x),b=meanSd(y);if(a.n<2||b.n<2)return null;
+  var v1=a.sd*a.sd/a.n,v2=b.sd*b.sd/b.n,se=Math.sqrt(v1+v2),t=(b.m-a.m)/se;
+  var df=(v1+v2)*(v1+v2)/(v1*v1/(a.n-1)+v2*v2/(b.n-1));
+  var sp=Math.sqrt(((a.n-1)*a.sd*a.sd+(b.n-1)*b.sd*b.sd)/(a.n+b.n-2));
+  return {pre:a,post:b,t:t,df:df,p:tP(t,df),d:sp?(b.m-a.m)/sp:0};
+}
+function mannU(x,y){
+  var all=x.map(function(v){return [v,0]}).concat(y.map(function(v){return [v,1]})).sort(function(p,q){return p[0]-q[0]});
+  var N=all.length,ranks=new Array(N),tie=0,i=0;
+  while(i<N){var j=i;while(j+1<N&&all[j+1][0]===all[i][0])j++;var r=(i+j)/2+1;for(var k=i;k<=j;k++)ranks[k]=r;var tt=j-i+1;tie+=tt*tt*tt-tt;i=j+1}
+  var R2=0;all.forEach(function(p,k){if(p[1])R2+=ranks[k]});
+  var n1=x.length,n2=y.length,U=R2-n2*(n2+1)/2,mu=n1*n2/2;
+  var sig=Math.sqrt(n1*n2/12*((N+1)-tie/(N*(N-1))));
+  var z=sig?(Math.abs(U-mu)-0.5)/sig:0;if(z<0)z=0;
+  return {U:U,z:(U>=mu?1:-1)*z,p:normP(z)};
+}
+function chiSq(rowsA,rowsB,keys){ /* 2 x k 분할표 */
+  var nA=0,nB=0;keys.forEach(function(k){nA+=rowsA[k]||0;nB+=rowsB[k]||0});var N=nA+nB,x2=0,low=0,df=0;
+  keys.forEach(function(k){var t=(rowsA[k]||0)+(rowsB[k]||0);if(!t)return;df++;var eA=t*nA/N,eB=t*nB/N;if(eA<5||eB<5)low++;x2+=Math.pow((rowsA[k]||0)-eA,2)/eA+Math.pow((rowsB[k]||0)-eB,2)/eB});
+  df=Math.max(df-1,1);
+  return {x2:x2,df:df,p:1-gammaP(df/2,x2/2),low:low,cells:keys.length*2};
+}
+
+/* ===== 사전 · 사후 ===== */
+function prepPre(d){
+  if(!d.pre)return;
+  var map={};d.pre.items.forEach(function(it,j){map[it.domain+'|'+it.label]=j});
+  var idx=d.items.map(function(it){var j=map[it.domain+'|'+it.label];return j===undefined?-1:j});
+  d.pre.records.forEach(function(r){var a={};idx.forEach(function(j,i){a[i]=j<0?'':(r.ans[j]||'')});r.ans=a});
+  d.pre.matched=idx.filter(function(j){return j>=0}).length;
+}
+function domScores(recs,k){
+  var out=[];recs.forEach(function(r){var s=0,n=0;DATA.items.forEach(function(it,i){if(it.choice||(k!=='ALL'&&it.domain!==k))return;var sc=it.domain==='A'?SCALES[0]:SCALES[1];var j=sc.indexOf(r.ans[i]);if(j<0)return;var v=4-j;if(it.reverse)v=5-v;s+=v;n++});if(n)out.push(s/n)});
+  return out;
+}
+function preRecs(){return preScope==='all'?DATA.pre.records:DATA.pre.records.filter(function(r){return r.grade==preScope})}
+function pp(){
+  if(ppCache&&ppCache.scope===preScope&&ppCache.data===DATA)return ppCache;
+  var A=preRecs(),B=DATA.records,res={scope:preScope,data:DATA,dom:{},sa:stats(A),sb:stats(B),nA:A.length,nB:B.length};
+  ['A','B','D','E','ALL'].forEach(function(k){var x=domScores(A,k),y=domScores(B,k);res.dom[k]={w:welch(x,y),u:mannU(x,y)}});
+  var ci=-1;DATA.items.forEach(function(it,i){if(it.choice)ci=i});
+  var ca={},cb={};A.forEach(function(r){var v=r.ans[ci];if(v)ca[v]=(ca[v]||0)+1});B.forEach(function(r){var v=r.ans[ci];if(v)cb[v]=(cb[v]||0)+1});
+  var keys=Object.keys(ca);Object.keys(cb).forEach(function(k){if(keys.indexOf(k)<0)keys.push(k)});
+  res.chi=ci>=0?chiSq(ca,cb,keys):null;res.ca=ca;res.cb=cb;
+  ppCache=res;return res;
+}
+function fp(p){return p<0.001?'< .001':p.toFixed(3).replace(/^0/,'')}
+function dLabel(d){d=Math.abs(d);return d<0.2?'매우 작음':d<0.5?'작음':d<0.8?'중간':'큼'}
+function sig(p){return p<0.05}
+function ppNone(){return '<div class="card fade" style="height:100%;display:flex;align-items:center;justify-content:center"><div style="max-width:640px;text-align:center"><div style="font-size:15px;color:'+C.sage+'">다음 단계</div><div style="font-size:32px;font-weight:700;margin-top:8px">사전 설문을 연결하면 이 페이지가 채워져요</div><div style="font-size:17px;color:'+C.mute+';margin-top:14px;line-height:1.7">응답 시트 메뉴 <b style="color:'+C.ink+'">SchoolKit → 사전 설문 시트 연결</b>에 사전 시트 주소를 넣고<br>Apps Script를 새 버전으로 배포한 뒤 새로고침하세요.</div></div></div>'}
+function scopeBar(){
+  var all=DATA.pre.records.length,g3=DATA.pre.records.filter(function(r){return r.grade==3}).length;
+  function b(v,t){return '<button class="pill'+(preScope==v?' on':'')+'" data-scope="'+v+'">'+t+'</button>'}
+  return '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:14px;color:'+C.mute+';margin-right:4px">사전 범위</span>'+b('all','전체 '+all+'명')+b(3,'3학년만 '+g3+'명')+'</div>';
+}
+function ppNote(r){
+  var gs={};preRecs().forEach(function(x){gs[x.grade]=(gs[x.grade]||0)+1});
+  var g=Object.keys(gs).sort().map(function(k){return k+'학년 '+gs[k]}).join(' · ');
+  return '사전 '+r.nA+'명('+g+') vs 사후 '+r.nB+'명(3학년) · 개인별 연결 없이 두 집단 평균 비교 · 학급 선택과 상관없이 전체 응답 기준';
+}
+function pPP1(){
+  if(!DATA.pre)return ppNone();
+  var r=pp(),keys=['A','B','D','E'];
+  var cards=keys.map(function(k){
+    var a=r.sa.dom[k]||{rate:0},b=r.sb.dom[k]||{rate:0},w=r.dom[k].w,diff=b.rate-a.rate;
+    var up=diff>=0,col=up?C.gold:C.rose;
+    return '<div class="card" style="display:flex;flex-direction:column;gap:16px">'+
+      '<div><div style="font-size:24px;font-weight:600">'+DOM_SHORT[k]+'</div><div style="font-size:14px;color:'+C.mute+';margin-top:4px">'+esc(DATA.domains[k])+'</div></div>'+
+      '<div><div style="font-size:14px;color:'+C.mute+'">긍정 응답률 변화</div><div class="big" style="color:'+col+';font-size:52px">'+(up?'+':'')+diff.toFixed(1)+'<span style="font-size:22px">%p</span></div></div>'+
+      '<div style="display:grid;gap:10px">'+
+        '<div style="display:grid;grid-template-columns:40px 1fr 50px;align-items:center;gap:10px;font-size:15px"><span style="color:'+C.mute+'">사전</span><div class="bar" style="height:12px"><b style="width:'+a.rate+'%;background:'+C.slate+'"></b></div><b style="text-align:right;color:'+C.mute+'">'+Math.round(a.rate)+'%</b></div>'+
+        '<div style="display:grid;grid-template-columns:40px 1fr 50px;align-items:center;gap:10px;font-size:15px"><span>사후</span><div class="bar" style="height:12px"><b style="width:'+b.rate+'%;background:'+C.gold+'"></b></div><b style="text-align:right;color:'+C.gold+'">'+Math.round(b.rate)+'%</b></div>'+
+      '</div>'+
+      '<div style="margin-top:auto;border-top:1px solid '+C.line+';padding-top:14px;display:grid;gap:8px;font-size:15px">'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:'+C.mute+'">평균 (4점)</span><span>'+w.pre.m.toFixed(2)+' → <b style="color:'+C.gold+'">'+w.post.m.toFixed(2)+'</b></span></div>'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:'+C.mute+'">효과크기 d</span><span><b>'+w.d.toFixed(2)+'</b> <span style="color:'+C.mute+'">'+dLabel(w.d)+'</span></span></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center"><span style="color:'+C.mute+'">p</span><span style="font-size:14px;font-weight:600;padding:3px 10px;border-radius:10px;'+(sig(w.p)?'background:'+C.sage+';color:'+C.bg:'border:1px solid '+C.line+';color:'+C.mute)+'">'+fp(w.p)+(sig(w.p)?' 유의':' 유의하지 않음')+'</span></div>'+
+      '</div></div>'}).join('');
+  return '<div class="fade" style="height:100%;display:flex;flex-direction:column;gap:14px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;color:'+C.mute+'">'+ppNote(r)+'</div>'+scopeBar()+'</div>'+
+    '<div class="g" style="grid-template-columns:repeat(4,1fr);flex:1">'+cards+'</div></div>';
+}
+function ppTable(r){
+  var names={A:'과학학습정서',B:'과학관련 자아개념',D:'과학관련 진로포부',E:'과학관련 태도',ALL:'전체(24문항)'};
+  return ['A','B','D','E','ALL'].map(function(k){var w=r.dom[k].w,u=r.dom[k].u;return {k:k,name:names[k],w:w,u:u}});
+}
+function ppSentence(r){
+  var rows=ppTable(r).filter(function(x){return x.k!=='ALL'});
+  var sigUp=rows.filter(function(x){return sig(x.w.p)&&x.w.d>0}),best=rows.slice().sort(function(a,b){return b.w.d-a.w.d})[0];
+  var all=r.dom.ALL.w;
+  var s='사전 설문('+r.nA+'명)과 사후 설문('+r.nB+'명)의 영역별 평균을 독립표본 t검정(Welch)으로 비교한 결과, ';
+  s+='전체 평균은 '+all.pre.m.toFixed(2)+'점에서 '+all.post.m.toFixed(2)+'점으로 '+(all.post.m>=all.pre.m?'높아졌으며':'낮아졌으며')+'(t='+all.t.toFixed(2)+', p'+(all.p<0.001?'<.001':'='+fp(all.p))+', d='+all.d.toFixed(2)+'), ';
+  s+=sigUp.length?sigUp.map(function(x){return x.name}).join(', ')+' 영역에서 통계적으로 유의한 향상이 나타났다. ':'영역별로는 통계적으로 유의한 향상이 나타나지 않았다. ';
+  if(best)s+='효과크기는 '+best.name+' 영역이 d='+best.w.d.toFixed(2)+'('+dLabel(best.w.d)+')로 가장 컸다.';
+  return s;
+}
+function pPP2(){
+  if(!DATA.pre)return ppNone();
+  var r=pp(),rows=ppTable(r);
+  var th='style="padding:10px 8px;color:'+C.mute+';font-size:14px;font-weight:400;text-align:right;border-bottom:1px solid '+C.line+'"';
+  var td='style="padding:12px 8px;text-align:right;font-size:17px;border-bottom:1px solid '+C.line+'"';
+  var body=rows.map(function(x){var w=x.w,s=sig(w.p),tot=x.k==='ALL';return '<tr style="'+(tot?'background:#262731':'')+'"><td '+td.replace('text-align:right','text-align:left')+'>'+x.name+'</td><td '+td+'>'+w.pre.n+'</td><td '+td+'>'+w.pre.m.toFixed(2)+' <span style="color:'+C.mute+'">('+w.pre.sd.toFixed(2)+')</span></td><td '+td+'>'+w.post.n+'</td><td '+td+'>'+w.post.m.toFixed(2)+' <span style="color:'+C.mute+'">('+w.post.sd.toFixed(2)+')</span></td><td '+td+'>'+w.t.toFixed(2)+'</td><td '+td+'>'+w.df.toFixed(1)+'</td><td '+td.replace('font-size:17px','font-size:17px;color:'+(s?C.sage:C.mute)+';font-weight:600')+'>'+fp(w.p)+'</td><td '+td.replace('font-size:17px','font-size:17px;color:'+C.gold+';font-weight:600')+'>'+w.d.toFixed(2)+'</td><td '+td+'>'+fp(x.u.p)+'</td></tr>'}).join('');
+  var chi=r.chi?'학습동기(C) 선택 분포 차이: χ²('+r.chi.df+') = '+r.chi.x2.toFixed(2)+', p '+(r.chi.p<0.001?'< .001':'= '+fp(r.chi.p))+(r.chi.low?' · 기대빈도 5 미만 칸 '+r.chi.low+'개(해석 주의)':''):'';
+  return '<div class="card fade" style="height:100%;display:flex;flex-direction:column">'+
+   '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="ctitle">영역별 사전 · 사후 비교 (독립표본 Welch t검정)</div><div class="csub">M = 평균(4점 척도), ( ) = 표준편차 · d = Cohen\'s d · 마지막 열은 만-휘트니 U 검정 p</div></div>'+scopeBar()+'</div>'+
+   '<table style="width:100%;border-collapse:collapse;margin-top:16px"><thead><tr><th '+th.replace('text-align:right','text-align:left')+'>영역</th><th '+th+'>사전 N</th><th '+th+'>사전 M (SD)</th><th '+th+'>사후 N</th><th '+th+'>사후 M (SD)</th><th '+th+'>t</th><th '+th+'>df</th><th '+th+'>p</th><th '+th+'>d</th><th '+th+'>U검정 p</th></tr></thead><tbody>'+body+'</tbody></table>'+
+   '<div style="font-size:15px;color:'+C.mute+';margin-top:12px">'+chi+'</div>'+
+   '<div style="margin-top:auto;background:#262731;border-radius:12px;padding:16px 18px;display:flex;gap:16px;align-items:flex-start"><div style="flex:1"><div style="font-size:13px;color:'+C.gold+'">보고서용 해석 문장 (자동 작성)</div><div style="font-size:15px;line-height:1.65;margin-top:6px" id="ppsent">'+esc(ppSentence(r))+'</div></div>'+
+   '<div style="display:grid;gap:8px;flex:none"><button class="btn" data-copy="table">표 복사</button><button class="btn" data-copy="sent">문장 복사</button></div></div>'+
+   '<div style="font-size:13px;color:'+C.mute+';margin-top:10px">'+ppNote(r)+'</div></div>';
+}
+function copyPP(what){
+  var r=pp(),txt;
+  if(what==='sent')txt=ppSentence(r);
+  else{txt=['영역','사전 N','사전 M','사전 SD','사후 N','사후 M','사후 SD','t','df','p','d','U검정 p'].join('\t')+'\n'+ppTable(r).map(function(x){var w=x.w;return [x.name,w.pre.n,w.pre.m.toFixed(2),w.pre.sd.toFixed(2),w.post.n,w.post.m.toFixed(2),w.post.sd.toFixed(2),w.t.toFixed(2),w.df.toFixed(1),fp(w.p),w.d.toFixed(2),fp(x.u.p)].join('\t')}).join('\n')}
+  function done(){toast(what==='sent'?'해석 문장을 복사했어요':'표를 복사했어요 · 한글이나 엑셀에 붙여넣으세요')}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fallback);else fallback();
+  function fallback(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){}document.body.removeChild(t)}
+}
+function pPP3(){
+  if(!DATA.pre)return ppNone();
+  var r=pp(),its=r.sb.items.map(function(b,i){var a=r.sa.items[i];return {label:b.label,domain:b.domain,reverse:b.reverse,a:a.pos,b:b.pos,d:b.pos-a.pos}}).sort(function(x,y){return y.d-x.d});
+  function list(arr,col){return arr.map(function(it){return '<div style="display:grid;grid-template-columns:1fr 130px 80px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid '+C.line+'"><div><div style="font-size:16px;line-height:1.4">'+esc(it.label)+'</div><div style="font-size:13px;color:'+C.mute+';margin-top:2px">'+DOM_SHORT[it.domain]+(it.reverse?' · 부정 문항':'')+'</div></div><div style="font-size:16px;text-align:right;color:'+C.mute+'">'+Math.round(it.a)+'% → <b style="color:'+C.ink+'">'+Math.round(it.b)+'%</b></div><b style="font-size:22px;text-align:right;color:'+col+'">'+(it.d>=0?'+':'')+it.d.toFixed(1)+'</b></div>'}).join('')}
+  return '<div class="fade" style="height:100%;display:flex;flex-direction:column;gap:14px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;color:'+C.mute+'">문항별 긍정 응답률 변화(%p) · 사전 '+r.nA+'명 vs 사후 '+r.nB+'명</div>'+scopeBar()+'</div>'+
+   '<div class="g" style="grid-template-columns:1fr 1fr;flex:1">'+
+   '<div class="card"><div class="ctitle">가장 많이 좋아진 문항</div><div style="margin-top:6px">'+list(its.slice(0,5),C.gold)+'</div></div>'+
+   '<div class="card"><div class="ctitle">변화가 작은 문항</div><div style="margin-top:6px">'+list(its.slice(-5).reverse(),C.rose)+'</div></div></div></div>';
+}
+
+/* ===== 화면 구성 ===== */
+function render(){
+  if(!DATA)return;
+  document.getElementById('bt').textContent=DATA.meta.title+' · '+DATA.meta.subtitle;
+  document.getElementById('pt').textContent=PAGES[page].t;
+  document.getElementById('pn').textContent=(page+1)+' / '+PAGES.length;
+  document.getElementById('upd').innerHTML='<span class="dot"></span>유효 응답 '+DATA.meta.valid+'명 · '+DATA.meta.updatedAt+' 업데이트';
+  var cs=classes();
+  document.getElementById('pills').innerHTML=['all'].concat(cs).map(function(c){return '<button class="pill'+(c==cls?' on':'')+'" data-c="'+c+'">'+(c==='all'?'전체':c+'반')+'</button>'}).join('');
+  clearInterval(quoteTimer);
+  document.getElementById('ct').innerHTML=PAGES[page].f(stats(filtered()));
+  if(page===0)startQuotes();
+  if(playing)armPlay();
+}
+function go(d){page=(page+d+PAGES.length)%PAGES.length;render()}
+function goHome(){page=0;render()}
+function armPlay(){
+  clearTimeout(playTimer);
+  var bar=document.querySelector('#prog b'),ms=SECS[secIdx]*1000;
+  bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;
+  bar.style.transition='width '+ms+'ms linear';bar.style.width='100%';
+  playTimer=setTimeout(function(){
+    if(page===PAGES.length-1){page=0;load(false)}else go(1);
+  },ms);
+}
+function setPlay(on){
+  playing=on;var b=document.getElementById('play');
+  b.classList.toggle('on',on);
+  document.getElementById('playIcon').setAttribute('d',on?'M7 5h4v14H7zM13 5h4v14h-4z':'M8 5v14l11-7z');
+  if(on){armPlay();toast(SECS[secIdx]+'초마다 다음 페이지로 넘어가요')}
+  else{clearTimeout(playTimer);var bar=document.querySelector('#prog b');bar.style.transition='none';bar.style.width='0'}
+}
+function load(manual){
+  var b=document.getElementById('rf');b.classList.add('spin');
+  var before=DATA?DATA.meta.valid:null;
+  function ok(d){
+    b.classList.remove('spin');document.getElementById('err').style.display='none';
+    prepPre(d);DATA=d;ppCache=null;render();
+    if(before!==null){var diff=d.meta.valid-before;toast(diff>0?'새 응답 '+diff+'개를 반영했어요':(manual?'새 응답이 없어요':''))}
+  }
+  function fail(e){b.classList.remove('spin');var el=document.getElementById('err');el.style.display='flex';el.innerHTML='데이터를 불러오지 못했어요<span style="font-size:14px;color:'+C.mute+'">'+esc(e&&e.message||e)+'</span>'}
+  if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getData()}
+  else if(window.PREVIEW_DATA){setTimeout(function(){ok(JSON.parse(JSON.stringify(window.PREVIEW_DATA)))},300)}
+  else{
+    var api=store('sk_api'), key=store('sk_key');
+    if(!api||!key){b.classList.remove('spin');setup();return}
+    fetch(api+'?key='+encodeURIComponent(key)+'&t='+Date.now())
+      .then(function(r){return r.json()})
+      .then(function(d){
+        if(d.error==='unauthorized'){b.classList.remove('spin');store('sk_key',null);setup('접근 코드가 맞지 않아요. 시트 메뉴 [SchoolKit > 연결 정보 보기]에서 확인하세요');return}
+        if(d.error){b.classList.remove('spin');setup(d.error);return}
+        ok(d);
+      }).catch(function(){b.classList.remove('spin');setup('웹 앱 주소로 연결하지 못했어요. 주소와 배포 설정(액세스: 모든 사용자)을 확인하세요')});
+  }
+}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
+function setup(msg){
+  var el=document.getElementById('err');el.style.display='flex';
+  var inp='height:46px;width:440px;border-radius:12px;border:1px solid '+C.line+';background:#1E1F27;color:'+C.ink+';padding:0 16px;font-size:15px;font-family:inherit;outline:none';
+  el.innerHTML='<div style="font-size:15px;color:'+C.gold+'">SchoolKit</div><div style="font-size:26px;font-weight:700;color:'+C.ink+'">대시보드 연결</div>'+
+    '<div style="font-size:15px;color:'+(msg?C.rose:C.mute)+';max-width:520px;text-align:center;line-height:1.5">'+esc(msg||'응답 시트 메뉴 [SchoolKit > 연결 정보 보기]에 나오는 두 값을 넣어 주세요. 이 브라우저에만 저장됩니다.')+'</div>'+
+    '<div style="display:grid;gap:10px;margin-top:12px"><input id="kapi" placeholder="① 웹 앱 주소 https://script.google.com/…/exec" style="'+inp+'" value="'+esc(store('sk_api')||'')+'">'+
+    '<input id="kin" type="password" placeholder="② 접근 코드" style="'+inp+'"><button id="kbt" class="btn" style="height:46px;border-radius:12px;justify-content:center">연결하기</button></div>';
+  var a=document.getElementById('kapi'),i=document.getElementById('kin');(a.value?i:a).focus();
+  function go(){
+    var u=a.value.trim(),v=i.value.trim();a.style.borderColor=i.style.borderColor=C.line;
+    if(!/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u)){a.style.borderColor=C.rose;return}
+    if(!v){i.style.borderColor=C.rose;return}
+    store('sk_api',u.replace(/\?.*$/,''));store('sk_key',v);el.style.display='none';load(false);
+  }
+  document.getElementById('kbt').onclick=go;
+  [a,i].forEach(function(x){x.onkeydown=function(e){e.stopPropagation();if(e.key==='Enter')go()}});
+}
+function toast(t){if(!t)return;var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2600)}
+function fit(){var s=Math.min(window.innerWidth/1300,(window.innerHeight-30)/740);document.getElementById('stage').style.transform='scale('+s+')'}
+
+document.getElementById('pills').addEventListener('click',function(e){var b=e.target.closest('.pill');if(!b)return;cls=b.dataset.c==='all'?'all':Number(b.dataset.c);render()});
+document.getElementById('rf').onclick=function(){load(true)};
+document.getElementById('pv').onclick=function(){go(-1)};
+document.getElementById('nx').onclick=function(){go(1)};
+document.getElementById('ct').addEventListener('click',function(e){
+  var s=e.target.closest('[data-scope]');if(s){preScope=s.dataset.scope==='all'?'all':Number(s.dataset.scope);render();return}
+  var c=e.target.closest('[data-copy]');if(c)copyPP(c.dataset.copy);
+});
+document.getElementById('home').onclick=goHome;
+document.querySelector('.brand').onclick=goHome;
+document.getElementById('play').onclick=function(){setPlay(!playing)};
+document.getElementById('sec').onclick=function(){secIdx=(secIdx+1)%SECS.length;this.textContent=SECS[secIdx]+'초';if(playing)armPlay()};
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')go(-1);
+  else if(e.key==='Home')goHome();
+  else if(e.key===' '){e.preventDefault();setPlay(!playing)}
+});
+document.getElementById('unlink').onclick=function(e){e.preventDefault();store('sk_api',null);store('sk_key',null);DATA=null;setPlay(false);setup('연결을 해제했어요')};
+window.addEventListener('resize',fit);fit();
+if(location.hash.match(/^#p\d+$/))page=Math.min(PAGES.length-1,parseInt(location.hash.slice(2),10)-1);
+load(false);
+</script>
+</body>
+</html>
